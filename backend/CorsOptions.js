@@ -4,7 +4,8 @@ const allowedOrigins = [
     'http://localhost:3500',
     'http://localhost:3002',
     'http://localhost:3001',
-    'https://dressing-shop.vercel.app'
+    'https://dressing-shop.vercel.app',
+    'https://dressing-shop-admin.vercel.app/addproduct/men'
 
      
 ];
