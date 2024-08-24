@@ -38,7 +38,7 @@ const Addproduct = (props) => {
 
         try {
            
-            const uploadResponse = await fetch('http://localhost:4000/upload', {
+            const uploadResponse = await fetch('https://dressing-shop-server.vercel.app/upload', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -52,7 +52,7 @@ const Addproduct = (props) => {
                 product.image = uploadData.image_url;
 
                
-                const productResponse = await fetch('http://localhost:4000/addproduct', {
+                const productResponse = await fetch('https://dressing-shop-server.vercel.app/addproduct', {
                     method: 'POST',
                     headers: {
                         Accept: 'application/json',

@@ -18,7 +18,7 @@ const ShopContextProvider = (props) => {
   const [auth,setAuth] = useState({})
 
   useEffect(() => {
-    fetch("http://localhost:4000/allproducts")
+    fetch("https://dressing-shop-server.vercel.app/allproducts")
       .then((res) => res.json())
       .then((data) => setAllProducts(data));
   }, []);

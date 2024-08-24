@@ -9,13 +9,13 @@ const Listproducts = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchProducts = async () => {
-    const response = await fetch("http://localhost:4000/allproducts");
+    const response = await fetch("https://dressing-shop-server.vercel.app/allproducts");
     const data = await response.json();
     setProducts(data);
   };
 
   const handleRemoveProduct = async (productId) => {
-    const response = await fetch("http://localhost:4000/removeproduct", {
+    const response = await fetch("https://dressing-shop-server.vercel.app/removeproduct", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +43,7 @@ const Listproducts = () => {
   const handleSaveProduct = async (updatedProduct) => {
     
     try {
-      const updateResponse = await fetch("http://localhost:4000/updateproduct", {
+      const updateResponse = await fetch("https://dressing-shop-server.vercel.app/updateproduct", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

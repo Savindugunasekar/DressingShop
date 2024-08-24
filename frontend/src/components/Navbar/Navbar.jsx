@@ -12,7 +12,7 @@ const Navbar = (props) => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:4000/logout', {
+      const response = await fetch('https://dressing-shop-server.vercel.app/logout', {
         method: 'GET',
         credentials: 'include' 
       })

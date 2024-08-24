@@ -6,7 +6,7 @@ export const PayButton = ({purchasedProducts,purchasedItems,userId,totalAmount})
 
         try {
 
-            const response = await fetch('http://localhost:4000/stripe/create-checkout-session',{
+            const response = await fetch('https://dressing-shop-server.vercel.app/stripe/create-checkout-session',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'

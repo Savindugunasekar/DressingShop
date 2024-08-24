@@ -240,7 +240,7 @@ app.get("/allproducts", async (req, res) => {
 passport.use(new GoogleStrategy({
     clientID:     process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:4000/auth/google/callback",
+    callbackURL: "https://dressing-shop-server.vercel.app/auth/google/callback",
     passReqToCallback   : true
   },
   async (request, accessToken, refreshToken, profile, done) => {
@@ -319,7 +319,7 @@ app.get('/auth/google/callback',
     const accessToken = req.accessToken; // Adjust this according to how your access token is stored
 
     // Redirect to the frontend with access token as a URL parameter
-    res.redirect(`http://localhost:3001/?accessToken=${accessToken}`);
+    res.redirect(`https://dressing-shop.vercel.app/?accessToken=${accessToken}`);
   }
 );
 

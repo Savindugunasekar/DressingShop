@@ -31,7 +31,7 @@ const Updateproduct = () => {
 
     const updateProduct = async () => {
         try {
-            const updateResponse = await fetch('http://localhost:4000/updateproduct', {
+            const updateResponse = await fetch('https://dressing-shop-server.vercel.app/updateproduct', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -17,7 +17,7 @@ const LoginSignup = () => {
   const login = async () => {
     console.log("login function executed", formData);
     let responseData;
-    await fetch("http://localhost:4000/login", {
+    await fetch("https://dressing-shop-server.vercel.app/login", {
       method: "POST",
       headers: {
         Accept: "application/form-data",
@@ -48,7 +48,7 @@ const LoginSignup = () => {
   const signup = async () => {
     console.log("signup function executed", formData);
     let responseData;
-    await fetch("http://localhost:4000/signup", {
+    await fetch("https://dressing-shop-server.vercel.app/signup", {
       method: "POST",
       headers: {
         Accept: "application/form-data",
@@ -78,7 +78,7 @@ const LoginSignup = () => {
 
   const handleGoogleLogin = () => {
     // Redirect user to the Google login route
-    window.location.href = "http://localhost:4000/auth/google";
+    window.location.href = "https://dressing-shop-server.vercel.app/auth/google";
   };
 
   const changeHandler = (e) => {
