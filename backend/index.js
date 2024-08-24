@@ -626,8 +626,8 @@ app.post('/stripe/create-checkout-session',async(req,res)=>{
 
      mode:'payment',
      customer: customer.id,
-     success_url : `${process.env.CLIENT_URL}/checkout-success`,
-     cancel_url: `${process.env.CLIENT_URL}/cart`,
+     success_url : `https://dressing-shop.vercel.app/checkout-success`,
+     cancel_url: `https://dressing-shop.vercel.app/cart`,
 
 
 
