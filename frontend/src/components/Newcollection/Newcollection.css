@@ -1,0 +1,26 @@
+.Newcollection{
+    padding-top: 150px;
+    width: 100%;
+   
+}
+
+.Newcollection h1{
+    text-align: center;
+    font-family: "didot";
+    font-size: 50px;
+    
+    color: #804733;
+    margin-bottom: 100px;
+}
+
+.new-items{
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    
+    gap: 20px;
+    flex-wrap: wrap;
+
+    
+}

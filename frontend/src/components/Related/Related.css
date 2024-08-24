@@ -1,0 +1,24 @@
+.related{
+    margin-top: 150px;
+}
+
+.related h2{
+    color: #591d07;
+    font-size: 30px;
+    text-align: center;
+}
+
+.relateditems{
+    
+        width: 90%;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        
+        gap: 50px;
+        flex-wrap: wrap;
+        margin-top: 50px;
+    
+        
+    
+}

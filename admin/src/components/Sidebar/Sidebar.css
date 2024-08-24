@@ -1,0 +1,42 @@
+.Sidebar{
+    width: 20%;
+    background-color: rgba(255, 255, 255, 0.782);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.addproduct{
+    margin-top: 100px;
+    height: 100px;
+    background-color: #fde7de;;
+    border-top: 2px solid rgba(0, 0, 0, 0.174); /* Add top border */
+    border-bottom: 2px solid rgba(0, 0, 0, 0.174);; /* Add bottom border */
+    display: flex;
+    align-items: center;
+   
+
+}
+
+
+.productlist{
+   
+    height: 100px;
+    background-color: #fde7de;;
+    border-top: 2px solid rgba(0, 0, 0, 0.174); /* Add top border */
+    border-bottom: 2px solid rgba(0, 0, 0, 0.174);; /* Add bottom border */
+    display: flex;
+    align-items: center;
+}
+
+.Sidebar h4{
+    margin-left: 20px;
+    font-size: 20px;
+    color: #aa5432;
+}
+
+
+.Sidebar img{
+    margin-left: 20px;
+}

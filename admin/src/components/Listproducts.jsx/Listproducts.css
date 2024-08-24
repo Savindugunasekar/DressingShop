@@ -1,0 +1,50 @@
+.listproducts{
+    margin-top: 90px;
+    width: 100%;
+   
+}
+
+.topics{
+    display: flex;
+    justify-content: space-around;
+}
+
+.itemtile{
+   display: flex;
+   align-items: center;
+   justify-content: space-around;
+   padding: 10px 0;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   background-color:  white;
+   border: 2px solid rgba(0, 0, 0, 0.132);
+   
+   
+}
+
+.itemtile div{
+  
+    width: 15%;
+    text-align: center;
+    margin-left: -50px;
+}
+
+.itemtile .product img{
+    height: 80px;
+    
+}
+.itemtile .oprice,
+.itemtile .nprice,
+
+
+.itemtile .remove {
+  font-size: 20px;
+}
+
+
+
+
+@media(max-width:1000px){
+    .itemtile{
+        padding: 5px 0;
+    }
+}

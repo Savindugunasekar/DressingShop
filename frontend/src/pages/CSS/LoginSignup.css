@@ -1,0 +1,48 @@
+.LoginSignup{
+    height: 100vh;
+   
+    
+   
+    margin-top: 100px;
+}
+
+.Signupcard h1{
+    text-align: center;
+}
+
+.Signupcard{
+    background: linear-gradient(to bottom, hwb(16 7% 48% / 0.655), hsla(16, 75%, 40%, 0.644));
+    color: black;
+    
+    position: relative;
+    transform: translateY(10%);
+    margin: 0 auto;
+  
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  padding: 10px 20px;
+  box-shadow: 0 0 5px black;
+
+}
+
+
+
+.Signupcard input{
+    font-size: 25px;
+    padding: 10px;
+    margin: 15px 0;
+    border: none;
+    border-radius: 10px;
+}
+
+.Signupcard p{
+    font-family: "poppins";
+    margin-top: 40px;
+    margin-bottom: 5px;
+}
+
+.Signupcard a{
+    color:#804733 ;
+}
+

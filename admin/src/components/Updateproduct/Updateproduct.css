@@ -1,0 +1,64 @@
+.productform{
+   
+    margin-top: 90px;
+    height: 100vh;
+    width: 100%;
+    background-color: white;
+    
+}
+
+.formcontainer{
+    
+    background-color:  #fff2ee;;
+   margin: 30px 100px;
+   padding: 30px;
+  
+   
+
+
+}
+
+.formcontainer label{
+    font-size: 20px;
+    color:#972a09;
+   
+    
+}
+
+.formcontainer input{
+    height: 25px;
+    border: none;
+    border-radius: 5px;
+    padding: 10px ;
+    margin: 10px 0px;
+}
+
+.productname input{
+    width: 80%;
+}
+
+.prices{
+    display: flex;
+    gap: 100px;
+}
+.formcontainer select {
+    height: 40px; /* Increase height to accommodate padding */
+    padding: 5px 10px; /* Adjust padding for better appearance */
+    font-size: 20px; /* Reduce font size slightly */
+    border: 1px solid #ccc; /* Add border for better visibility */
+    border-radius: 5px; /* Add border-radius for a more modern look */
+    color:  #972a09;;
+}
+
+.formcontainer option {
+    font-size: 20px; /* Adjust font size to match select */
+}
+
+.formcontainer input[type="submit"]{
+font-size: 25px;
+padding: 10px 20px;
+height: 50px;
+border-radius: 10px;
+background-color: #972a09df;
+color: white;
+}

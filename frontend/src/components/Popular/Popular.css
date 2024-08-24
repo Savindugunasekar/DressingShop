@@ -1,0 +1,25 @@
+.popular{
+    padding-top: 150px;
+    width: 100%;
+   
+}
+
+.popular h1{
+    text-align: center;
+    font-family: "didot";
+    font-size: 50px;
+    
+    color: #804733;
+    margin-bottom: 100px;
+}
+
+.popular-items{
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+
+    
+}

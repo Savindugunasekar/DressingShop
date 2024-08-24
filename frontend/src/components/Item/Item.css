@@ -1,0 +1,66 @@
+  
+        
+        .item{
+           width: 250px;
+            display: inline-block;
+            border: 1px solid black;
+            font-family: "poppins";
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-right: 30px;
+
+        }
+
+        .item:hover{
+            transform: scale(1.05);
+        }
+
+
+
+        .item img{
+            width: 100%;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .item-info{
+            padding: 10px;
+        }
+
+        .item h4{
+            font-size: 20px;
+            line-height: 25px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: #622610;
+           
+            font-weight: 400;
+        }
+
+
+
+        @media(max-width:1265px){
+
+            .item{
+                width: 30%;
+            }
+        }
+
+        
+        @media(max-width:900px){
+
+            .item{
+                width: 40%;
+            }
+        }
+
+        @media(max-width:650px){
+
+            .item{
+                width: 80%;
+            }
+        }
