@@ -22,10 +22,10 @@ const Modal = ({ show, onClose, product, onSave }) => {
         subcategory: product.subcategory,
         new_price: product.new_price,
         old_price: product.old_price,
-        size_S: product.s,
-        size_M: product.me,
-        size_L: product.l,
-        size_XL: product.xl,
+        size_S: product.size_S,
+        size_M: product.size_M,
+        size_L: product.size_L,
+        size_XL: product.size_XL,
       });
     }
   }, [product]);
