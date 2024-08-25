@@ -1,42 +1,58 @@
-.Sidebar{
+.Sidebar {
     width: 20%;
-    background-color: rgba(255, 255, 255, 0.782);
+    background-color: #f5f5f5; /* Light gray background for a cleaner look */
     height: 100vh;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding: 20px; /* Add padding for better spacing */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
 }
 
-.addproduct{
-    margin-top: 100px;
-    height: 100px;
-    background-color: #fde7de;;
-    border-top: 2px solid rgba(0, 0, 0, 0.174); /* Add top border */
-    border-bottom: 2px solid rgba(0, 0, 0, 0.174);; /* Add bottom border */
+.Sidebar h4 {
+    margin-left: 20px;
+    font-size: 18px; /* Slightly smaller font size for consistency */
+    color: #804733; /* Darker brown for better contrast */
+    font-weight: 500; /* Slightly bolder font for emphasis */
+}
+
+.Sidebar img {
+    height: 30px; /* Consistent image height */
+    width: 30px; /* Ensure images are of the same size */
+}
+
+.addproductmen,
+.addproductwomen,
+.addproductkids,
+.productlist {
+    background-color: #fff2ee; /* Light peach background for all items */
+    border-radius: 8px; /* Rounded corners */
+    border: 1px solid #ddd; /* Light gray border for separation */
     display: flex;
     align-items: center;
-   
-
+    padding: 10px 20px; /* Add padding for better spacing */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
 }
 
-
-.productlist{
-   
-    height: 100px;
-    background-color: #fde7de;;
-    border-top: 2px solid rgba(0, 0, 0, 0.174); /* Add top border */
-    border-bottom: 2px solid rgba(0, 0, 0, 0.174);; /* Add bottom border */
-    display: flex;
-    align-items: center;
+.addproductmen:hover,
+.addproductwomen:hover,
+.addproductkids:hover,
+.productlist:hover {
+    background-color: #ffe4d2; /* Slightly darker peach on hover */
+    transform: scale(1.02); /* Slight scale effect on hover */
 }
 
-.Sidebar h4{
-    margin-left: 20px;
-    font-size: 20px;
-    color: #aa5432;
+.addproductmen img,
+.addproductwomen img,
+.addproductkids img,
+.productlist img {
+    margin-left: 0; /* Align image to the left without extra margin */
 }
 
-
-.Sidebar img{
-    margin-left: 20px;
+.addproductmen h4,
+.addproductwomen h4,
+.addproductkids h4,
+.productlist h4 {
+    margin-left: 15px; /* Reduced margin to fit better with padding */
+    font-size: 18px; /* Consistent font size */
 }

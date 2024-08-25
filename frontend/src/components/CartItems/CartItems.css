@@ -1,32 +1,47 @@
 .itemList {
     margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fdf2ed; /* Peach background */
 }
 
 .topics {
     text-align: center;
     margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333; /* Dark gray text */
 }
 
 .cart-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 50px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .cart-table th, 
 .cart-table td {
-    padding: 10px;
+    padding: 15px;
     text-align: center;
     border: 1px solid #ddd;
 }
 
 .cart-table th {
-    background-color: #f4f4f4;
+    background-color: #A68F73; /* Lighter brown background for header */
+    color: #F2E3D7; /* Lighter peach text */
     font-weight: bold;
+}
+
+.cart-table td {
+    background-color: #FFF; /* White background for table data */
 }
 
 .cart-table td img {
     height: 80px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .itemtile .price,
@@ -34,27 +49,63 @@
 .itemtile .total,
 .itemtile .remove {
     font-size: 16px;
+    color: #333; /* Dark gray text */
+}
+
+.itemtile .remove i {
+    color: #FF6F6F; /* Lighter red color for remove icon */
+    cursor: pointer;
+    transition: transform 0.2s, color 0.3s;
+}
+
+.itemtile .remove i:hover,
+.itemtile .remove i:focus {
+    transform: scale(1.1);
+    color: #F44336; /* Lighter red on hover and focus */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds depth */
 }
 
 .totalcost {
     text-align: center;
+    padding: 20px;
+   
+    border-radius: 10px;
+
 }
 
 .totalcost h1 {
     margin-bottom: 20px;
+    font-size: 24px;
+    color: #333; /* Dark gray text */
 }
 
 .totalcost button {
-    padding: 10px 20px;
+    background-color: #A68F73; /* Lighter brown button */
+    color: #F2E3D7; /* Lighter peach text */
+    padding: 12px 25px;
     font-size: 18px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.totalcost button:hover,
+.totalcost button:focus {
+    background-color: #2A2A2A; /* Lighter almost black on hover and focus */
+    color: #F2E3D7; /* Lighter peach text on hover and focus */
+    transform: scale(1.05);
 }
 
 @media(max-width: 768px) {
     .cart-table th, 
     .cart-table td {
-        padding: 5px;
-        font-size: 12px;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .totalcost h1 {
+        font-size: 20px;
     }
 
     .totalcost button {

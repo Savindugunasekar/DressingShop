@@ -32,23 +32,7 @@ const CartItems = (props) => {
 
     const [totalAmount, setTotalAmount] = useState(null);
 
-    // Function to handle checkout
-    // const handleCheckout = async () => {
-    //     await fetch('http://localhost:4000/checkout', {
-    //         method: 'POST',
-    //         headers: {
-    //             Accept: 'application/json',
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //             userId: userId,
-    //             purchasedItems: purchasedItems,
-    //             totalAmount: totalcost(), // Call totalcost() to get the current total amount
-    //             purchasedProducts:purchasedProducts
-    //         })
-    //     });
-    // };
-
+  
     return (
         <div className="itemList">
             <div className='topics'>

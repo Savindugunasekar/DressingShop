@@ -1,5 +1,30 @@
+.subcategoryButtons {
+  width: 25%;
+  background-color: #ffefea; /* Subtle background color for side menu */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds depth */
+  padding: 20px;
+}
+
+.subcategoryButtons ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.subcategoryButtons li {
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 8px;
+}
+
+.subcategoryButtons li:hover {
+  background-color: #ffd6cc; /* Hover effect for better interaction */
+}
+
 .activesub {
-    background-color: #ffb59aae; color: white;
-    
-  }
-  
+  background-color: #ffb59a; 
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); /* Highlight the active item */
+}
