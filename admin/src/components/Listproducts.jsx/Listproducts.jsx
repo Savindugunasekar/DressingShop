@@ -101,7 +101,7 @@ const Listproducts = () => {
             <div className="oprice">${item.old_price}</div>
             <div className="category">{item.category}</div>
             <div>
-              <button onClick={() => handleEditProduct(item)}>Edit</button>
+              <button id="edit" onClick={() => handleEditProduct(item)}>Edit</button>
             </div>
             <div className="remove">
               <p

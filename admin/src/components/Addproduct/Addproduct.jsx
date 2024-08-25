@@ -118,7 +118,9 @@ const Addproduct = (props) => {
     return (
         <div className='productform'>
             <div className='formcontainer'>
-                <div className="productname">
+                
+                <div className='prices'>
+                    <div className='price-input'>
                     <label htmlFor="productname">Product Title</label><br />
                     <input
                         type="text"
@@ -127,9 +129,9 @@ const Addproduct = (props) => {
                         value={productDetails.name}
                         onChange={productHandler}
                     />
-                </div>
-                <div className='prices'>
-                    <div className="price1">
+                    </div>
+               
+                    <div className="price-input">
                         <label htmlFor="price">Price</label><br />
                         <input
                             type="number"
@@ -139,7 +141,7 @@ const Addproduct = (props) => {
                             onChange={productHandler}
                         />
                     </div>
-                    <div className="price2">
+                    <div className="price-input">
                         <label htmlFor="offerprice">Offer Price</label><br />
                         <input
                             type="number"
@@ -192,6 +194,7 @@ const Addproduct = (props) => {
                         />
                     </div>
                 </div>
+                <div id='third'>
                 {renderSubcategory()}
                 <div className="imageinput">
                     <label htmlFor="productimage" className="upload-icon">
@@ -212,6 +215,8 @@ const Addproduct = (props) => {
                         {loading ? "Adding..." : "Add Product"}
                     </button>
                 </div>
+                </div>
+                
             </div>
         </div>
     );
