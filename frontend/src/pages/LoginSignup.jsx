@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CSS/LoginSignup.css";
 import { ShopContext } from "../context/ShopContext";
-
+import { jwtDecode } from "jwt-decode";
 const LoginSignup = () => {
   const navigate = useNavigate();
   const { setAuth } = useContext(ShopContext);
@@ -17,7 +17,7 @@ const LoginSignup = () => {
   const login = async () => {
     console.log("login function executed", formData);
     let responseData;
-    await fetch("https://dressing-shop-server.vercel.app/login", {
+    await fetch(`https://dressing-shop-server.vercel.app/login`, {
       method: "POST",
       headers: {
         Accept: "application/form-data",
@@ -32,7 +32,11 @@ const LoginSignup = () => {
     if (responseData.success) {
       const accessToken = responseData.accessToken;
 
-      setAuth({ accessToken: accessToken });
+      const decoded = jwtDecode(accessToken);
+
+      const userId = decoded?.UserInfo?.userId;
+
+      setAuth({ accessToken: accessToken, userId: userId });
       setFormData({
         username: "",
         password: "",
@@ -48,7 +52,7 @@ const LoginSignup = () => {
   const signup = async () => {
     console.log("signup function executed", formData);
     let responseData;
-    await fetch("https://dressing-shop-server.vercel.app/signup", {
+    await fetch(`https://dressing-shop-server.vercel.app/signup`, {
       method: "POST",
       headers: {
         Accept: "application/form-data",
@@ -78,7 +82,7 @@ const LoginSignup = () => {
 
   const handleGoogleLogin = () => {
     // Redirect user to the Google login route
-    window.location.href = "https://dressing-shop-server.vercel.app/auth/google";
+    window.location.href = `https://dressing-shop-server.vercel.app/auth/google`;
   };
 
   const changeHandler = (e) => {

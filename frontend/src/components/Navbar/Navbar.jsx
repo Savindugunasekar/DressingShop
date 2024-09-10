@@ -12,37 +12,48 @@ const Navbar = (props) => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('https://dressing-shop-server.vercel.app/logout', {
-        method: 'GET',
-        credentials: 'include' 
-      })
+      const response = await fetch(
+        `https://dressing-shop-server.vercel.app/logout`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       if (response.ok) {
-       setAuth({})
+        setAuth({});
         navigate("/"); // Navigate to home page after logout
       }
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     }
   };
 
   return (
-    <div className={`navbar ${scrolling ? 'scrolled' : ''}`}>
+    <div className={`navbar ${scrolling ? "scrolled" : ""}`}>
       <div className="logo">
         <img src={logo} alt="Logo" height="60px" />
       </div>
 
       <ul>
         <li>
-          <NavLink to="/" exact activeClassName="active">Shop</NavLink>
+          <NavLink to="/" exact activeClassName="active">
+            Shop
+          </NavLink>
         </li>
         <li>
-          <NavLink to="/men" activeClassName="active">Men</NavLink>
+          <NavLink to="/men" activeClassName="active">
+            Men
+          </NavLink>
         </li>
         <li>
-          <NavLink to="/women" activeClassName="active">Women</NavLink>
+          <NavLink to="/women" activeClassName="active">
+            Women
+          </NavLink>
         </li>
         <li>
-          <NavLink to="/kids" activeClassName="active">Kids</NavLink>
+          <NavLink to="/kids" activeClassName="active">
+            Kids
+          </NavLink>
         </li>
       </ul>
 
@@ -57,7 +68,9 @@ const Navbar = (props) => {
         {auth.accessToken ? (
           <button onClick={handleLogout}>Logout</button>
         ) : (
-          <NavLink to="/login"><button>Login</button></NavLink>
+          <NavLink to="/login">
+            <button>Login</button>
+          </NavLink>
         )}
       </div>
     </div>

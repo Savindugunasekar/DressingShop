@@ -28,37 +28,45 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        {/* <Navbar/> */}
-        <Navbar countItems={sum} />
+       
+          {/* <Navbar/> */}
+          <Navbar countItems={sum} />
+         
 
-        <Routes>
-          <Route path="/" element={<Shop />} />
-          <Route
-            path="/men"
-            element={<ShopCategory category="men" imageNum="0" />}
-          />
-          <Route
-            path="/women"
-            element={<ShopCategory category="women" imageNum="1" />}
-          />
+          <Routes>
+            
 
-          <Route
-            path="/kids"
-            element={<ShopCategory category="kids" imageNum="2" />}
-          />
-          <Route path="/product" element={<Product />}>
-            <Route path=":productId" element={<Product />} />
-          </Route>
+          <Route path="/login" element={<LoginSignup />} />
+
 
           <Route element={<PersistLogin />}>
+          
+            <Route path="/" element={<Shop />} />
+            <Route
+              path="/men"
+              element={<ShopCategory category="men" imageNum="0" />}
+            />
+            <Route
+              path="/women"
+              element={<ShopCategory category="women" imageNum="1" />}
+            />
+
+            <Route
+              path="/kids"
+              element={<ShopCategory category="kids" imageNum="2" />}
+            />
+            <Route path="/product" element={<Product />}>
+              <Route path=":productId" element={<Product />} />
+            </Route>
+
             <Route path="/cart" element={<Cart />} />
 
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
 
-          </Route>
-
-          <Route path="/login" element={<LoginSignup />} />
-        </Routes>
+         
+            </Route>
+          </Routes>
+        
 
         <Footer />
       </BrowserRouter>

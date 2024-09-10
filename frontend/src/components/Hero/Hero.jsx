@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import './Hero.css'
 import whitegirl from '../Assets/whitegirl-removebg.png'
+import { ShopContext } from "../../context/ShopContext";
 
 
 
 
 
 const Hero = () => {
+
+    const {auth} = useContext(ShopContext)
 
     
 
@@ -22,6 +25,9 @@ const Hero = () => {
                 <div className="headings">
                     <h2> Step into the store</h2>
                     <h1>Unleash Your Fasion Story</h1>
+
+                    <h1>acccesstoken {auth.accessToken}</h1>
+                    <h1>userId: {auth.userId}</h1>
 
                     
 

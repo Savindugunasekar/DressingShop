@@ -1,62 +1,53 @@
 const express = require("express");
-require('dotenv').config();
-const { v4: uuidv4 } = require('uuid');
+require("dotenv").config();
+const { v4: uuidv4 } = require("uuid");
 
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const path = require("path");
-const credentials = require('./middleware/credentials');
-const passport = require('passport')
-const cookieParser = require('cookie-parser')
+const credentials = require("./middleware/credentials");
+const passport = require("passport");
+const cookieParser = require("cookie-parser");
 const db = require("./db"); // Ensure this module is set up to handle PostgreSQL queries
 const corsOptions = require("./CorsOptions");
-const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
-
-
-
-
+const GoogleStrategy = require("passport-google-oauth2").Strategy;
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 app.use(credentials);
 
-const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
+const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
-const session = require('express-session');
+const session = require("express-session");
 const { BlobServiceClient } = require("@azure/storage-blob");
 
-
-app.use(session({secret:'cats'}))
-app.use (passport.initialize())
-app.use(passport.session())
+app.use(session({ secret: "cats" }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(cors(corsOptions));
 
 app.use(express.json());
 
 app.use(cookieParser());
 
-
 const upload = multer({ storage: multer.memoryStorage() });
 
-const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_CONNECTION_STRING);
-const containerClient = blobServiceClient.getContainerClient('ecomcontainer');
+const blobServiceClient = BlobServiceClient.fromConnectionString(
+  process.env.AZURE_CONNECTION_STRING
+);
+const containerClient = blobServiceClient.getContainerClient("ecomcontainer");
 
 const uploadImageToAzure = async (buffer, originalName) => {
-    const blobName = `product image/${uuidv4()}-${path.basename(originalName)}`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    await blockBlobClient.uploadData(buffer);
-    return blockBlobClient.url;
+  const blobName = `product image/${uuidv4()}-${path.basename(originalName)}`;
+  const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+  await blockBlobClient.uploadData(buffer);
+  return blockBlobClient.url;
 };
-
-
-
-
 
 app.post(
   "/stripe/webhook",
-  // Parse the raw body as a Buffer or string
-  express.raw({ type: "application/json" }),
+  express.raw({ type: "application/json" }), // Parse the raw body as a Buffer
   async (req, res) => {
     let data;
     let eventType;
@@ -64,9 +55,8 @@ app.post(
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (webhookSecret) {
-      // Retrieve the event by verifying the signature using the raw body and secret.
       let event;
-      let signature = req.headers["stripe-signature"];
+      const signature = req.headers["stripe-signature"];
 
       try {
         event = stripe.webhooks.constructEvent(
@@ -74,65 +64,78 @@ app.post(
           signature,
           webhookSecret
         );
+        console.log("Webhook signature verified");
       } catch (err) {
-        console.log(`⚠️  Webhook signature verification failed: ${err}`);
+        console.error(
+          `⚠️  Webhook signature verification failed: ${err.message}`
+        );
         return res.sendStatus(400);
       }
 
       data = event.data.object;
       eventType = event.type;
     } else {
-      
       data = req.body.data.object;
       eventType = req.body.type;
     }
 
-    
+    console.log(`Event received: ${eventType}`);
+    console.log(`Event data: ${JSON.stringify(data)}`);
+
+    // Handle checkout session completed
     if (eventType === "checkout.session.completed") {
-      stripe.customers
-        .retrieve(data.customer)
-        .then(async (customer) => {
-          try {
-            await createOrder(customer, data);
-          } catch (err) {
-            console.log(err);
-          }
-        })
-        .catch((err) => console.error(err));
+      try {
+        const customer = await stripe.customers.retrieve(data.customer);
+        console.log("Customer retrieved:", customer);
+
+        // Call createOrder and make sure it's awaited
+        const order = await createOrder(customer, data);
+
+        console.log("Order successfully created:", order);
+      } catch (err) {
+        console.error("Error creating order:", err);
+        return res
+          .status(500)
+          .json({ success: false, message: "Error creating order" });
+      }
     }
 
+    // Send success response back to Stripe
     res.status(200).end();
   }
 );
 
-
-app.post('/upload', upload.single('image'), async (req, res) => {
+app.post("/upload", upload.single("image"), async (req, res) => {
   try {
-   
-    const imageUrl = await uploadImageToAzure(req.file.buffer, req.file.originalname);
+    const imageUrl = await uploadImageToAzure(
+      req.file.buffer,
+      req.file.originalname
+    );
 
-    
     res.json({
       success: true,
       image_url: imageUrl,
     });
   } catch (error) {
-    console.error('Error uploading image:', error);
-    res.status(500).json({ success: false, message: 'Error uploading image' });
+    console.error("Error uploading image:", error);
+    res.status(500).json({ success: false, message: "Error uploading image" });
   }
 });
 
-
-
-
-
-
-
-
-
-app.post('/addproduct', async (req, res) => {
+app.post("/addproduct", async (req, res) => {
   try {
-    const { name, image, category, subcategory, new_price, old_price, size_S, size_M, size_L, size_XL } = req.body;
+    const {
+      name,
+      image,
+      category,
+      subcategory,
+      new_price,
+      old_price,
+      size_S,
+      size_M,
+      size_L,
+      size_XL,
+    } = req.body;
 
     // Insert product details into the database
     const queryText = `
@@ -140,7 +143,18 @@ app.post('/addproduct', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *`;
 
-    const values = [name, image, category, subcategory, new_price, old_price, size_S, size_M, size_L, size_XL];
+    const values = [
+      name,
+      image,
+      category,
+      subcategory,
+      new_price,
+      old_price,
+      size_S,
+      size_M,
+      size_L,
+      size_XL,
+    ];
     const result = await db.query(queryText, values);
 
     res.json({
@@ -148,8 +162,10 @@ app.post('/addproduct', async (req, res) => {
       product: result.rows[0],
     });
   } catch (error) {
-    console.error('Error processing request:', error);
-    res.status(500).json({ success: false, message: 'Error processing request' });
+    console.error("Error processing request:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error processing request" });
   }
 });
 
@@ -235,97 +251,105 @@ app.get("/allproducts", async (req, res) => {
 
 //google integration
 
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: `https://dressing-shop-server.vercel.app/auth/google/callback`,
+      passReqToCallback: true,
+    },
+    async (request, accessToken, refreshToken, profile, done) => {
+      try {
+        // Check if the user exists in the database
+        let userResult = await db.query(
+          "SELECT * FROM users WHERE email = $1",
+          [profile.email]
+        );
 
-
-passport.use(new GoogleStrategy({
-    clientID:     process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://dressing-shop-server.vercel.app/auth/google/callback",
-    passReqToCallback   : true
-  },
-  async (request, accessToken, refreshToken, profile, done) => {
-    try {
-      // Check if the user exists in the database
-      let userResult = await db.query('SELECT * FROM users WHERE email = $1', [profile.email]);
-  
-      let user;
-      if (userResult.rows.length === 0) {
-        // If user does not exist, create a new user
-        let cart = {};
-        for (let i = 0; i < 300; i++) {
-          cart[i] = 0;
+        let user;
+        if (userResult.rows.length === 0) {
+          // If user does not exist, create a new user
+          let cart = {};
+          for (let i = 0; i < 300; i++) {
+            cart[i] = 0;
+          }
+          user = await db.query(
+            "INSERT INTO users (name, email, password, cartdata, refreshtoken) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+            [profile.displayName, profile.email, profile.id, cart, "dummy"]
+          );
+          user = user.rows[0];
+        } else {
+          user = userResult.rows[0];
         }
-        user = await db.query('INSERT INTO users (name, email, password, cartdata, refreshtoken) VALUES ($1, $2, $3, $4, $5) RETURNING *', [
-          profile.displayName,
-          profile.email,
-          profile.id,
-          cart,
-          'dummy'
+
+        // Generate tokens
+        const userId = user.id;
+        const accessToken = jwt.sign(
+          { userInfo: { userId: userId } },
+          process.env.ACCESS_TOKEN_SECRET,
+          { expiresIn: "30s" }
+        );
+        const refreshToken = jwt.sign(
+          { userId: userId },
+          process.env.REFRESH_TOKEN_SECRET,
+          { expiresIn: "1d" }
+        );
+
+        await db.query("UPDATE users SET refreshtoken=$1 WHERE id=$2", [
+          refreshToken,
+          userId,
         ]);
-        user = user.rows[0];
-      } else {
-        user = userResult.rows[0];
+
+        // Store tokens in the request object for use in the callback route
+        request.accessToken = accessToken;
+        request.refreshToken = refreshToken;
+        request.userId = userId;
+
+        // Call done to complete the authentication process
+        done(null, user); // Correct usage of done
+      } catch (error) {
+        done(error, null); // Correct error handling
       }
-  
-      // Generate tokens
-      const userId = user.id;
-      const accessToken = jwt.sign({ userInfo: { userId: userId } }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
-      const refreshToken = jwt.sign({ userId: userId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
-
-      await db.query("UPDATE users SET refreshtoken=$1 WHERE id=$2", [
-        refreshToken,
-        userId,
-      ]);
-  
-      // Store tokens in the request object for use in the callback route
-      request.accessToken = accessToken;
-      request.refreshToken = refreshToken;
-      request.userId = userId;
-
-      
-
-
-  
-      // Call done to complete the authentication process
-      done(null, user); // Correct usage of done
-    } catch (error) {
-      done(error, null); // Correct error handling
     }
-  }
-  
-));
+  )
+);
 
-passport.serializeUser(function(user,done){
-  done(null,user)
-})
+passport.serializeUser(function (user, done) {
+  done(null, user);
+});
 
-passport.deserializeUser(function(user,done){
-  done(null,user)
-})
-app.get('/auth/google',
-  passport.authenticate('google', { scope:
-      [ 'email', 'profile' ] }
-));
+passport.deserializeUser(function (user, done) {
+  done(null, user);
+});
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["email", "profile"] })
+);
 
-app.get('/auth/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: '/auth/failure'
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/auth/failure",
   }),
   (req, res) => {
     // Successful authentication handler
-    res.cookie('jwt', req.refreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
+    res.cookie("jwt", req.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     // Get the access token from req.user or wherever it's stored after authentication
     const accessToken = req.accessToken; // Adjust this according to how your access token is stored
 
     // Redirect to the frontend with access token as a URL parameter
-    res.redirect(`https://dressing-shop.vercel.app/?accessToken=${accessToken}`);
+    res.redirect(
+      `https://dressing-shop-server.vercel.app/?accessToken=${accessToken}`
+    );
   }
 );
-
-
-
-
 
 // User signup
 app.post("/signup", async (req, res) => {
@@ -346,18 +370,16 @@ app.post("/signup", async (req, res) => {
     }
 
     const newUser = await db.query(
-        "INSERT INTO users (name, email, password, cartdata,refreshtoken) VALUES ($1, $2, $3, $4,$5) RETURNING id",
-        [req.body.username, req.body.email, req.body.password, cart,'dummy']
-      );
+      "INSERT INTO users (name, email, password, cartdata,refreshtoken) VALUES ($1, $2, $3, $4,$5) RETURNING id",
+      [req.body.username, req.body.email, req.body.password, cart, "dummy"]
+    );
 
-      const userId = newUser.rows[0].id;
-
-
+    const userId = newUser.rows[0].id;
 
     const accessToken = jwt.sign(
       {
-        "userInfo": {
-          "userId": userId,
+        userInfo: {
+          userId: userId,
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
@@ -365,22 +387,22 @@ app.post("/signup", async (req, res) => {
     );
 
     const refreshToken = jwt.sign(
-      { "userId": userId },
+      { userId: userId },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "1d" }
     );
 
     await db.query("UPDATE users SET refreshtoken=$1 WHERE id=$2", [
-        refreshToken,
-        userId,
-      ]);
-      
+      refreshToken,
+      userId,
+    ]);
 
-      res.cookie('jwt', refreshToken, { httpOnly: true,secure:true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
-    
-
-   
-   
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res.json({ success: true, accessToken, userId });
   } catch (error) {
@@ -405,16 +427,16 @@ app.post("/login", async (req, res) => {
 
         const accessToken = jwt.sign(
           {
-            "userInfo": {
-              "userId": user.id,
+            UserInfo: {
+              userId: user.id,
             },
           },
           process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "30s" }
+          { expiresIn: "15min" }
         );
 
         const refreshToken = jwt.sign(
-          { "userId": user.id },
+          { userId: user.id },
           process.env.REFRESH_TOKEN_SECRET,
           { expiresIn: "1d" }
         );
@@ -422,7 +444,6 @@ app.post("/login", async (req, res) => {
         //store refresh token in cookie
 
         await db.query("UPDATE users SET refreshtoken=$1 WHERE id=$2", [
-          
           refreshToken,
           user.id,
         ]);
@@ -434,7 +455,7 @@ app.post("/login", async (req, res) => {
           maxAge: 24 * 60 * 60 * 1000,
         });
 
-        res.json({ success: true, accessToken:accessToken, userId: user.id });
+        res.json({ success: true, accessToken: accessToken, userId: user.id });
       } else {
         return res.json({ success: false, error: "Wrong Password" });
       }
@@ -446,75 +467,85 @@ app.post("/login", async (req, res) => {
   }
 });
 
-
 //refresh part
 
-app.get('/refresh', async (req, res) => {
-    const cookies = req.cookies;
+app.get("/refresh", async (req, res) => {
+  const cookies = req.cookies;
 
-    if (!cookies?.jwt) return res.sendStatus(401);
+  if (!cookies?.jwt) return res.sendStatus(401);
 
-    const refreshToken = cookies.jwt;
+  const refreshToken = cookies.jwt;
 
-    try {
-        const userResult = await db.query('SELECT * FROM users WHERE refreshtoken = $1', [refreshToken]);
-        const user = userResult.rows[0];
+  try {
+    const userResult = await db.query(
+      "SELECT * FROM users WHERE refreshtoken = $1",
+      [refreshToken]
+    );
+    const user = userResult.rows[0];
 
-        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, decoded) => {
-            if (error || user.id !== decoded.userId) {
-                return res.sendStatus(403);
-            }
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (error, decoded) => {
+        if (error || user.id !== decoded.userId) {
+          return res.sendStatus(403);
+        }
 
-            // Token verification successful, generate new access token
-            const accessToken = jwt.sign({
-                userInfo: {
-                    userId: decoded.userId
-                }
-            }, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: '30s'
-            });
+        // Token verification successful, generate new access token
+        const accessToken = jwt.sign(
+          {
+            UserInfo: {
+              userId: user.id,
+            },
+          },
+          process.env.ACCESS_TOKEN_SECRET,
+          {
+            expiresIn: "15min",
+          }
+        );
 
-            // Send the new access token in the response
-            res.json({ accessToken });
-        });
-    } catch (err) {
-        console.error('Error in refresh endpoint:', err);
-        res.sendStatus(500); // Handle server error
-    }
+        // Send the new access token in the response
+        res.json({ accessToken: accessToken });
+      }
+    );
+  } catch (err) {
+    console.error("Error in refresh endpoint:", err);
+    res.sendStatus(500); // Handle server error
+  }
 });
-
-
 
 //logout
 
-app.get('/logout',async(req,res)=>{
-    const cookies = req.cookies;
-    if (!cookies?.jwt) return res.sendStatus(204); //No content
-    const refreshToken = cookies.jwt;
+app.get("/logout", async (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204); //No content
+  const refreshToken = cookies.jwt;
 
-    const userResult = await db.query('SELECT * FROM users WHERE refreshtoken=$1',[refreshToken])
+  const userResult = await db.query(
+    "SELECT * FROM users WHERE refreshtoken=$1",
+    [refreshToken]
+  );
 
-    if (!userResult.rows.length>0){
-        res.clearCookie('jwt',{
-            httpOnly: true, sameSite: 'None', secure: true
-        })
-        return res.sendStatus(204)
-    }
+  if (!userResult.rows.length > 0) {
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
+    return res.sendStatus(204);
+  }
 
-    const userId = userResult.rows[0].id;
+  const userId = userResult.rows[0].id;
 
-    await db.query('UPDATE users SET refreshtoken=$1 WHERE id=$2',['',userId])
+  await db.query("UPDATE users SET refreshtoken=$1 WHERE id=$2", ["", userId]);
 
-    res.clearCookie('jwt',{
-        httpOnly: true, sameSite: 'None', secure: true
-    })
-    return res.sendStatus(204)
-   
-
-    
-
-
-})
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+  });
+  return res.sendStatus(204);
+});
 
 /** Miscellaneous **/
 
@@ -549,123 +580,86 @@ app.get("/popularinwomen", async (req, res) => {
 
 // Checkout and update inventory
 
-const createMergedItems = (purchasedItems,purchasedProducts)=>{
+const createMergedItems = (purchasedItems, purchasedProducts) => {
+  console.log("Purchased Items:", JSON.stringify(purchasedItems));
+  console.log("Purchased Products:", JSON.stringify(purchasedProducts));
+  let mergedItems = [];
 
-  console.log('Purchased Items:', JSON.stringify(purchasedItems));
-  console.log('Purchased Products:', JSON.stringify(purchasedProducts));
-  let mergedItems =[];
+  purchasedItems.forEach((item) => {
+    let product = purchasedProducts.find((p) => p.id === item.itemId);
 
-  purchasedItems.forEach(item=>{
-    let product =  purchasedProducts.find(p=>p.id===item.itemId);
-
-    if(product){
+    if (product) {
       mergedItems.push({
-        id:product.id,
-        name:product.name,
-       price:product.new_price,
-       quantity:item.quantity
-
-      })
-
-
+        id: product.id,
+        name: product.name,
+        price: product.new_price,
+        quantity: item.quantity,
+      });
     }
+  });
 
+  return mergedItems;
+};
 
-  })
-
-  return mergedItems
-
-}
-
-app.post('/stripe/create-checkout-session',async(req,res)=>{
-
-  const { userId, purchasedItems, totalAmount ,purchasedProducts} = req.body;
-
+app.post("/stripe/create-checkout-session", async (req, res) => {
+  const { userId, purchasedItems, totalAmount, purchasedProducts } = req.body;
 
   try {
-
     const customer = await stripe.customers.create({
-      metadata:{
-        userId:userId,
-        purchasedItems:JSON.stringify(purchasedItems),
-        totalAmount:totalAmount
-      }
-    })
+      metadata: {
+        userId: userId,
+        purchasedItems: JSON.stringify(purchasedItems),
+        totalAmount: totalAmount,
+      },
+    });
 
-    const mergedItems = createMergedItems(purchasedItems,purchasedProducts)
-
-
-    
-   
-    
+    const mergedItems = createMergedItems(purchasedItems, purchasedProducts);
 
     console.log(`merges items are ${JSON.stringify(mergedItems)} `);
 
     const line_items = mergedItems.map((item) => {
       return {
         price_data: {
-          currency: 'usd',
+          currency: "usd",
           product_data: {
-            name: item.name,  // Make sure item.name is defined correctly
+            name: item.name, // Make sure item.name is defined correctly
           },
-          unit_amount: Math.round(item.price * 100) // Convert price to cents
+          unit_amount: Math.round(item.price * 100), // Convert price to cents
         },
         quantity: item.quantity,
       };
     });
-    
-
-
-
-    
 
     const session = await stripe.checkout.sessions.create({
+      line_items: line_items,
 
-     line_items : line_items,
-     
-
-     mode:'payment',
-     customer: customer.id,
-     success_url : `https://dressing-shop.vercel.app/checkout-success`,
-     cancel_url: `https://dressing-shop.vercel.app/cart`,
-
-
-
-    
-    })
+      mode: "payment",
+      customer: customer.id,
+      success_url: `https://dressing-shop-server.vercel.app/checkout-success`,
+      cancel_url: `https://dressing-shop-server.vercel.app/cart`,
+    });
 
     res.send({ url: session.url });
-    
   } catch (error) {
-    throw error
+    throw error;
   }
+});
 
-  
-
-})
-
-
-
-const createOrder = async (customer,data) => {
+const createOrder = async (customer, data) => {
   try {
+    const purchasedItems = JSON.parse(customer.metadata.purchasedItems);
+    const totalAmount = customer.metadata.totalAmount;
+    const userId = customer.metadata.userId;
 
-  const purchasedItems = JSON.parse(customer.metadata.purchasedItems)
+    console.log("Creating order for user:", userId);
+    console.log("Purchased items:", purchasedItems);
+    console.log("Total amount:", totalAmount);
 
-  const totalAmount = customer.metadata.totalAmount
-
-  const userId = customer.metadata.userId
-
-
-    
-
-
-    // Insert a new order into the orders table
     const newOrder = await db.query(
       "INSERT INTO orders (customerid, purchaseditems, total_amount) VALUES ($1, $2, $3) RETURNING *",
       [userId, JSON.stringify(purchasedItems), totalAmount]
     );
 
-    // Update inventory for each purchased item
     for (const item of purchasedItems) {
       let sizeColumn;
       switch (item.size) {
@@ -681,24 +675,23 @@ const createOrder = async (customer,data) => {
         case "XL":
           sizeColumn = "xl";
           break;
+        default:
+          throw new Error("Invalid size");
       }
+
       await db.query(
         `UPDATE product SET ${sizeColumn} = ${sizeColumn} - $2 WHERE id = $1`,
         [item.itemId, item.quantity]
       );
     }
 
-    res.json({ success: true, order: newOrder.rows[0] });
+    console.log("Order created successfully:", newOrder.rows[0]);
+    return newOrder.rows[0];
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to process checkout" });
+    console.error("Error creating order:", error);
+    throw new Error("Failed to process order creation");
   }
 };
-
-
-
 
 // Start the server
 app.listen(PORT, (error) => {

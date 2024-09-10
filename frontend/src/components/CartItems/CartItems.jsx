@@ -5,7 +5,8 @@ import { ShopContext } from '../../context/ShopContext';
 import { PayButton } from '../PayButton/PayButton';
 
 const CartItems = (props) => {
-    const userId = localStorage.getItem('user');
+    const {auth} = useContext(ShopContext)
+    const userId = auth.userId;
     const { all_product, cartItems, removeFromCart } = useContext(ShopContext);
 
     // Calculate purchased items based on cartItems

@@ -15,10 +15,10 @@ const getDefaultCart = () => {
 const ShopContextProvider = (props) => {
   const [all_product, setAllProducts] = useState([]);
 
-  const [auth,setAuth] = useState({})
+  const [auth, setAuth] = useState({});
 
   useEffect(() => {
-    fetch("https://dressing-shop-server.vercel.app/allproducts")
+    fetch(`https://dressing-shop-server.vercel.app/allproducts`)
       .then((res) => res.json())
       .then((data) => setAllProducts(data));
   }, []);
@@ -36,7 +36,14 @@ const ShopContextProvider = (props) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
   };
 
-  const contextValue = { all_product, cartItems,auth,setAuth, addToCart, removeFromCart };
+  const contextValue = {
+    all_product,
+    cartItems,
+    auth,
+    setAuth,
+    addToCart,
+    removeFromCart,
+  };
 
   return (
     <ShopContext.Provider value={contextValue}>

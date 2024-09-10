@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Listproducts.css";
 import { Link } from "react-router-dom";
-import Modal from "../Modal/Modal"; 
+import Modal from "../Modal/Modal";
 
 const Listproducts = () => {
   const [products, setProducts] = useState([]);
@@ -9,19 +9,24 @@ const Listproducts = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchProducts = async () => {
-    const response = await fetch("https://dressing-shop-server.vercel.app/allproducts");
+    const response = await fetch(
+      `https://dressing-shop-server.vercel.app/allproducts`
+    );
     const data = await response.json();
     setProducts(data);
   };
 
   const handleRemoveProduct = async (productId) => {
-    const response = await fetch("https://dressing-shop-server.vercel.app/removeproduct", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: productId }),
-    });
+    const response = await fetch(
+      `https://dressing-shop-server.vercel.app/removeproduct`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: productId }),
+      }
+    );
 
     const data = await response.json();
     if (data.success) {
@@ -41,15 +46,17 @@ const Listproducts = () => {
   };
 
   const handleSaveProduct = async (updatedProduct) => {
-    
     try {
-      const updateResponse = await fetch("https://dressing-shop-server.vercel.app/updateproduct", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedProduct),
-      });
+      const updateResponse = await fetch(
+        `https://dressing-shop-server.vercel.app/updateproduct`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedProduct),
+        }
+      );
 
       if (!updateResponse.ok) {
         throw new Error("Failed to update product");
@@ -58,7 +65,7 @@ const Listproducts = () => {
       const updateData = await updateResponse.json();
       if (updateData.success) {
         alert("Product updated");
-        
+
         setProducts((prevProducts) =>
           prevProducts.map((product) =>
             product.id === updatedProduct.id ? updatedProduct : product
@@ -101,7 +108,9 @@ const Listproducts = () => {
             <div className="oprice">${item.old_price}</div>
             <div className="category">{item.category}</div>
             <div>
-              <button id="edit" onClick={() => handleEditProduct(item)}>Edit</button>
+              <button id="edit" onClick={() => handleEditProduct(item)}>
+                Edit
+              </button>
             </div>
             <div className="remove">
               <p
